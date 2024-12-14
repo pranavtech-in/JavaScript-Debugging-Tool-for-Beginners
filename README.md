@@ -38,6 +38,6 @@ A simple yet powerful JavaScript debugging tool designed specifically for beginn
 
 ## 🖥️ Installation
 To use this tool:
-1. add this script tag in your html file:
+1. add this script tag in your html file or fork this repository and improve our tool together ☺️:
    ```bash
      <script src="https://cdn.jsdelivr.net/gh/pranavtech-in/JavaScript-Debugging-Tool-for-Beginners@add9463d9db2a4b7dc65ef49a1a104ee90807a4a/code/index.js"></script>
