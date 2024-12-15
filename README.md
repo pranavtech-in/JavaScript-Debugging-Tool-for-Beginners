@@ -40,4 +40,4 @@ A simple yet powerful JavaScript debugging tool designed specifically for beginn
 To use this tool:
 1. add this script tag in your html file or fork this repository and improve our tool together ☺️:
    ```bash
-     <script src="https://cdn.jsdelivr.net/gh/pranavtech-in/JavaScript-Debugging-Tool-for-Beginners@add9463d9db2a4b7dc65ef49a1a104ee90807a4a/code/index.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/pranavtech-in/JavaScript-Debugging-Tool-for-Beginners@6e10fdedc7e192bd7274b42a8750a237c1a73e54/code/index.js"></script> 
