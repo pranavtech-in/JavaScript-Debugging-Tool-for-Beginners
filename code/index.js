@@ -5,7 +5,7 @@
   errorBox.style.cssText = `
         position: fixed; bottom: 20px; left: 20px; right: 20px; height: 300px;
         background-color: #1e1e1e; color: white; border: 2px solid aqua;
-        font-family: monospace; padding: 10px; z-index: 10000; overflow: hidden;
+        font-family: monospace; padding: 10px; z-index: 10000; overflow-y: auto;
         display: flex; flex-direction: column; gap: 10px;
     `;
 
@@ -78,18 +78,25 @@
   // Error explanations
   function getSimpleExplanation(message) {
     const explanations = {
-      undefined: "It seems you're trying to use something that hasn't been defined. Make sure all variables or functions exist.",
-      syntax: "There's a typo or error in how the code is written. Check for missing brackets, commas, or quotes.",
-      null: "You're trying to access something that doesn't exist yet. A 'null' means it's intentionally empty.",
-      "is not a function": "You're calling something as if it's a function, but it isn't. Double-check your code.",
-      "type error": "A value is being used incorrectly. For example, adding numbers to strings may cause this.",
-      "reference error": "You're using a variable that hasn't been declared or is outside your scope.",
-      "range error": "A number or array is too big or out of range for the operation you're doing.",
+      "undefined": "You attempted to use a variable or function that has not been declared or initialized.",
+      "syntax": "There's a syntax error in your code. This means JavaScript can't interpret it.",
+      "null": "A null value was used where an object or value was expected.",
+      "is not a function": "You tried to call something as a function that is not callable.",
+      "type error": "A value is being used in an unexpected way based on its type.",
+      "reference error": "A variable or object is being used but hasn't been declared in scope.",
+      "range error": "A number is out of its allowable range."
     };
     for (let key in explanations) {
       if (message.toLowerCase().includes(key)) return explanations[key];
     }
-    return "Oops! Something went wrong. Review your code and try again.";
+    return "An unknown error occurred. Review your code.";
+  }
+
+  // Scroll to latest message
+  function scrollToLatest() {
+    setTimeout(() => {
+      errorContent.scrollTop = errorContent.scrollHeight;
+    }, 0);
   }
 
   // Log Errors
@@ -103,8 +110,8 @@
 
     errorItem.innerHTML = `
       <p><strong>Error:</strong> ${message}</p>
-      <p><strong>Explanation:</strong> ${explanation}</p>
       <p><strong>Location:</strong> ${source}:${lineno}:${colno}</p>
+      <p><strong>Explanation:</strong> ${explanation}</p>
     `;
 
     if (error?.stack) {
@@ -116,7 +123,36 @@
       errorItem.appendChild(stackTrace);
     }
     errorContent.appendChild(errorItem);
+    scrollToLatest();
   }
+
+  // Override console.log to capture and display messages
+  const originalConsoleLog = console.log;
+  console.log = function(...args) {
+    const logItem = document.createElement("div");
+    logItem.style.cssText = `
+            margin: 10px 0; padding: 10px; border-left: 4px solid green;
+            background-color: #1e1e1e; color: white;
+        `;
+    logItem.innerHTML = `<p><strong>Log:</strong> ${args.join(' ')}</p>`;
+    errorContent.appendChild(logItem);
+    scrollToLatest();
+    originalConsoleLog.apply(console, args);
+  };
+
+  // Override console.error to capture and display errors
+  const originalConsoleError = console.error;
+  console.error = function(...args) {
+    const errorItem = document.createElement("div");
+    errorItem.style.cssText = `
+            margin: 10px 0; padding: 10px; border-left: 4px solid red;
+            background-color: #1e1e1e; color: white;
+        `;
+    errorItem.innerHTML = `<p><strong>Error:</strong> ${args.join(' ')}</p>`;
+    errorContent.appendChild(errorItem);
+    scrollToLatest();
+    originalConsoleError.apply(console, args);
+  };
 
   // Execute Code
   runButton.onclick = function() {
@@ -128,14 +164,15 @@
       if (result !== undefined) {
         const resultItem = document.createElement("div");
         resultItem.style.cssText = `
-                margin: 10px 0; padding: 10px; border-left: 4px solid #00ff00;
+                margin: 10px 0; padding: 10px; border-left: 4px solid green;
                 background-color: #1e1e1e; color: white;
             `;
         resultItem.innerHTML = `<p><strong>Result:</strong> ${result}</p>`;
         errorContent.appendChild(resultItem);
+        scrollToLatest();
       }
     } catch (error) {
-      logError(error.message, "", "", "", error);
+      logError(error.message, '', '', '', error);
     }
   };
 
@@ -154,5 +191,6 @@
     logError(message, source, lineno, colno, error);
   };
 
+  // Append errorBox to body
   document.body.appendChild(errorBox);
 })();
